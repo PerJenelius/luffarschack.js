@@ -1,0 +1,46 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    margin: 10px;
+    border-collapse: collapse;
+}
+
+table, td {
+    border: 1px solid green;
+}
+
+td {
+    width: 20px;
+    height: 20px;
+    background: lightyellow;
+    cursor: pointer;
+}
+
+.cross {
+    background-image: url('img/cross.png');
+}
+
+.circle {
+    background-image: url('img/circle.png');
+}
+
+.hidden {
+    width: 0;
+    height: 0;
+}
+
+.emphasis {
+    background-color: lightgreen !important;
+}
+
+.inactive {
+    background-color: lightblue;
+}
+
+.score {
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
