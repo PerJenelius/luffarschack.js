@@ -8,6 +8,10 @@ table {
     border-collapse: collapse;
 }
 
+tr {
+    height: 22px;
+}
+
 table, td {
     border: 1px solid green;
 }
