@@ -1,19 +1,22 @@
-const board = document.getElementById('board'), 
-    winLength = 5, 
-    columnMin = 0, 
-    columnMax = 14, 
-    rowMin = 0 
-    rowMax = 14;
+'use strict';
 
-let player1Score = 0, 
-    player2Score = 0, 
-    activePlayer = 1;
+const app = {
+    board: document.getElementById('board'),
+    winLength: 5,
+    columnMin: 0,
+    columnMax: 14,
+    rowMin: 0,
+    rowMax: 14,
+    player1Score: 0,
+    player2Score: 0,
+    activePlayer: 1
+};
 
 const main = () => {
-    for(let y = rowMin; y <= rowMax; y++) {
-        let tr = board.insertRow();
+    for(let y = app.rowMin; y <= app.rowMax; y++) {
+        let tr = app.board.insertRow();
 
-        for(let x = columnMin; x <= columnMax; x++) {
+        for(let x = app.columnMin; x <= app.columnMax; x++) {
             initiateCell(tr, x, y, false);
         }
     }
@@ -33,7 +36,7 @@ const cellClick = (cellId) => {
     let cellClass = cell.getAttribute('class');
 
     if  (cellClass === null) {
-        cell.className = activePlayer === 1 ? 'cross' : 'circle';
+        cell.className = app.activePlayer === 1 ? 'cross' : 'circle';
         expandCanvas(cellId);
         calculateWin(cellId);
         changePlayer();
@@ -44,32 +47,32 @@ const expandCanvas = (cellId) => {
     let xCoord = parseInt(cellId.split(',')[0]);
     let yCoord = parseInt(cellId.split(',')[1]);
     
-    if (yCoord === rowMax) {
-        ++rowMax;
-        let tr = board.insertRow();
-        for(let x = columnMin; x <= columnMax; x++) {
-            initiateCell(tr, x, rowMax, false);
+    if (yCoord === app.rowMax) {
+        ++app.rowMax;
+        let tr = app.board.insertRow();
+        for(let x = app.columnMin; x <= app.columnMax; x++) {
+            initiateCell(tr, x, app.rowMax, false);
         }
-    } else if (yCoord === rowMin) {
-        --rowMin;
-        let tr = board.insertRow(0);
-        for(let x = columnMin; x <= columnMax; x++) {
-            initiateCell(tr, x, rowMin, false);
+    } else if (yCoord === app.rowMin) {
+        --app.rowMin;
+        let tr = app.board.insertRow(0);
+        for(let x = app.columnMin; x <= app.columnMax; x++) {
+            initiateCell(tr, x, app.rowMin, false);
         }
     }
     
     let trs = document.querySelectorAll('tr');
-    let rowCount = 1 + (rowMax - rowMin);
+    let rowCount = 1 + (app.rowMax - app.rowMin);
 
-    if (xCoord === columnMax) {
-        ++columnMax;
+    if (xCoord === app.columnMax) {
+        ++app.columnMax;
         for (let i = 0; i < rowCount; i++) {
-            initiateCell(trs[i], columnMax, (rowMin + i), false);
+            initiateCell(trs[i], app.columnMax, (app.rowMin + i), false);
         }
-    } else if (xCoord === columnMin) {
-        --columnMin;
+    } else if (xCoord === app.columnMin) {
+        --app.columnMin;
         for (let i = 0; i < rowCount; i++) {
-            initiateCell(trs[i], columnMin, (rowMin + i), true);
+            initiateCell(trs[i], app.columnMin, (app.rowMin + i), true);
         }
     }
 }
@@ -78,10 +81,10 @@ const calculateWin = (cellId) => {
     let cellClass = document.getElementById(cellId).getAttribute('class'), 
         xCoord = parseInt(cellId.split(',')[0]), 
         yCoord = parseInt(cellId.split(',')[1]);
-    let n = ne = e = se = s = sw = w = nw = 0;
-    let nA = neA = eA = seA = sA = swA = wA = nwA = true;
+    let n =0, ne = 0, e = 0, se = 0, s = 0, sw = 0, w = 0, nw = 0;
+    let nA = true, neA = true, eA = true, seA = true, sA = true, swA = true, wA = true, nwA = true;
 
-    for (let i = 1; i < winLength; i++) {
+    for (let i = 1; i < app.winLength; i++) {
         neA = neA && document.getElementById((xCoord + i) + ',' + (yCoord - i)).getAttribute('class') === cellClass;
         ne = neA ? (ne + 1) : ne;
         eA = eA && document.getElementById((xCoord + i) + ',' + (yCoord)).getAttribute('class') === cellClass;
@@ -100,19 +103,19 @@ const calculateWin = (cellId) => {
         n = nA ? (n + 1) : n;
     }
 
-    if ((ne + sw) >= (winLength - 1)) {
+    if ((ne + sw) >= (app.winLength - 1)) {
         showWinner((xCoord - sw), (yCoord + sw), (xCoord + ne), (yCoord - ne));
     }
 
-    if ((w + e) >= (winLength - 1)) {
+    if ((w + e) >= (app.winLength - 1)) {
         showWinner((xCoord - w), yCoord, (xCoord + e), yCoord);
     }
 
-    if ((nw + se) >= (winLength - 1)) {
+    if ((nw + se) >= (app.winLength - 1)) {
         showWinner((xCoord - nw), (yCoord - nw), (xCoord + se), (yCoord + se));
     }
 
-    if ((n + s) >= (winLength - 1)) {
+    if ((n + s) >= (app.winLength - 1)) {
         showWinner(xCoord, (yCoord - n), xCoord, (yCoord + s));
     }
 }
@@ -125,7 +128,7 @@ const showWinner = (minX, minY, maxX, maxY) => {
         }
     });
 
-    for (let i = 0; i < winLength; i++) {
+    for (let i = 0; i < app.winLength; i++) {
         let coordinates = 
             maxX > minX && maxY > minY ? (minX + i) + ',' + (minY + i)
             : maxX > minX && maxY === minY ? (minX + i) + ',' + minY
@@ -135,24 +138,24 @@ const showWinner = (minX, minY, maxX, maxY) => {
         document.getElementById(coordinates).className += ' emphasis';
     }
 
-    if (activePlayer === 1) {
-        ++player1Score;
-        document.getElementById('player1Score').innerHTML = player1Score;
+    if (app.activePlayer === 1) {
+        ++app.player1Score;
+        document.getElementById('player1Score').innerHTML = app.player1Score;
     } else {
-        ++player2Score;
-        document.getElementById('player2Score').innerHTML = player2Score;
+        ++app.player2Score;
+        document.getElementById('player2Score').innerHTML = app.player2Score;
     }
 }
 
 const changePlayer = () => {
-    if (activePlayer === 1) {
+    if (app.activePlayer === 1) {
         document.getElementById('cross').className = 'indicator cross';
         document.getElementById('circle').className += ' emphasis';
-        activePlayer = 2;
+        app.activePlayer = 2;
     } else {
         document.getElementById('cross').className += ' emphasis';
         document.getElementById('circle').className = 'indicator circle';
-        activePlayer = 1;
+        app.activePlayer = 1;
     }
 }
 
